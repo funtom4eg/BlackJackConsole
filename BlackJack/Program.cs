@@ -10,6 +10,12 @@ namespace BlackJack
     {
         static void Main(string[] args)
         {
+            //for correct view of suites
+            Console.OutputEncoding = Encoding.Unicode;
+
+            Game game = new Game();
+
+            GC.Collect();
         }
     }
 }
