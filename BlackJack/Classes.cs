@@ -93,8 +93,13 @@ namespace BlackJack
             while (true)
             {
                 if (player.Points != 21)
+                {
                     answer = Console.ReadKey(true).KeyChar;
-                else answer = ' ';
+                }
+                else
+                {
+                    answer = ' ';
+                }
                 switch (answer)
                 {
                     case 'x': return true; //exit game
@@ -289,6 +294,7 @@ namespace BlackJack
         {
             return string.Concat("[", Suite, " ", Value, "]");
         }
+
     }
 
 }
