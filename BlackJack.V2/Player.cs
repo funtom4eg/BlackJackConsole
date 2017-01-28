@@ -2,46 +2,49 @@
 
 namespace BlackJack.V2
 {
-    class Player
+    partial class Game
     {
-        public List<Card> Hand
+        class Player
         {
-            get;
-        }
-
-        public Player()
-        {
-            Hand = new List<Card>();
-        }
-
-        public int Points
-        {
-            get
+            public List<Card> Hand
             {
-                int result = 0;
-                foreach (Card card in Hand)
+                get;
+            }
+
+            public Player()
+            {
+                Hand = new List<Card>();
+            }
+
+            public int Points
+            {
+                get
                 {
-                    if(card.Points >11)
+                    int result = 0;
+                    foreach (Card card in Hand)
                     {
-                        result += 10;
-                        continue;
+                        if (card.Points > 11)
+                        {
+                            result += 10;
+                            continue;
+                        }
+
+                        result += card.Points;
                     }
 
-                    result += card.Points;
+                    return result;
                 }
-
-                return result;
             }
-        }
 
-        public void TakeOne(Card card)
-        {
-            Hand.Add(card);
-        }
+            public void TakeOne(Card card)
+            {
+                Hand.Add(card);
+            }
 
-        public void Clear()
-        {
-            Hand.Clear();
+            public void Clear()
+            {
+                Hand.Clear();
+            }
         }
     }
 }

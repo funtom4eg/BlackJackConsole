@@ -1,11 +1,9 @@
 ﻿namespace BlackJack.V2
 {
-    class Game
+    partial class Game
     {
         GameStatistics stats;
-
         CardShoe cardShoe;
-
         Player dealer;
         Player player;
 
@@ -22,10 +20,8 @@
             dealer = new Player();
             player = new Player();
 
-            while (startNewRound)
+            do
             {
-                NewRound();
-
                 if (cardShoe.needNewShoe)
                 {
                     cardShoe.FillAndShuffleShoe(numberOfDecks);
@@ -33,7 +29,9 @@
 
                 dealer.Clear();
                 player.Clear();
-            }
+
+                NewRound();
+            } while (startNewRound==true);
         }
 
         void NewRound()

@@ -4,61 +4,64 @@ using System.Linq;
 
 namespace BlackJack.V2
 {
-    class CardShoe
+    partial class Game
     {
-        readonly List<Card> sortedCardDeck = new List<Card>();
-
-        Stack<Card> shuffledCardShoe = new Stack<Card>();
-
-        static Random rand = new Random();
-
-        int MinCardsInShoe { get; }
-
-        public bool needNewShoe = false;
-
-        public CardShoe(int numberOfDecks, double minVolumeOfShoe)
+        class CardShoe
         {
-            foreach (CardSuites suite in Enum.GetValues(typeof(CardSuites)))
+            readonly List<Card> sortedCardDeck = new List<Card>();
+
+            Stack<Card> shuffledCardShoe = new Stack<Card>();
+
+            static Random rand = new Random();
+
+            int MinCardsInShoe { get; }
+
+            public bool needNewShoe = false;
+
+            public CardShoe(int numberOfDecks, double minVolumeOfShoe)
             {
-                foreach (CardValues value in Enum.GetValues(typeof(CardValues)))
+                foreach (CardSuites suite in Enum.GetValues(typeof(CardSuites)))
                 {
-                    sortedCardDeck.Add(new Card(suite, value));
+                    foreach (CardValues value in Enum.GetValues(typeof(CardValues)))
+                    {
+                        sortedCardDeck.Add(new Card(suite, value));
+                    }
                 }
+
+                FillAndShuffleShoe(numberOfDecks);
+
+                MinCardsInShoe = (int)(sortedCardDeck.Count * numberOfDecks * minVolumeOfShoe);
             }
 
-            FillAndShuffleShoe(numberOfDecks);
-
-            MinCardsInShoe = (int)(sortedCardDeck.Count * numberOfDecks * minVolumeOfShoe);
-        }
-
-        public void FillAndShuffleShoe(int numberOfDecks)
-        {
-            if (shuffledCardShoe.Count > 0)
+            public void FillAndShuffleShoe(int numberOfDecks)
             {
-                shuffledCardShoe.Clear();
-            }
-
-
-            for (int i = 0; i < numberOfDecks; i++)
-            {
-                foreach (Card card in sortedCardDeck.OrderBy(x => rand.Next()))
+                if (shuffledCardShoe.Count > 0)
                 {
-                    shuffledCardShoe.Push(card);
+                    shuffledCardShoe.Clear();
                 }
+
+
+                for (int i = 0; i < numberOfDecks; i++)
+                {
+                    foreach (Card card in sortedCardDeck.OrderBy(x => rand.Next()))
+                    {
+                        shuffledCardShoe.Push(card);
+                    }
+                }
+
+                //sortedCardDeck.OrderBy(x => rand.Next()).ToList().ForEach(x => shuffledCardShoe.Push(x));
+
             }
 
-            //sortedCardDeck.OrderBy(x => rand.Next()).ToList().ForEach(x => shuffledCardShoe.Push(x));
-
-        }
-
-        public Card GiveOne()
-        {
-            if (shuffledCardShoe.Count < this.MinCardsInShoe)
+            public Card GiveOne()
             {
-                needNewShoe = true;
-            }
+                if (shuffledCardShoe.Count < this.MinCardsInShoe)
+                {
+                    needNewShoe = true;
+                }
 
-            return shuffledCardShoe.Pop();
+                return shuffledCardShoe.Pop();
+            }
         }
     }
 }

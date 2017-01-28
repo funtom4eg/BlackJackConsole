@@ -1,10 +1,13 @@
 ﻿namespace BlackJack.V2
 {
-    struct GameStatistics
+    partial class Game
     {
-        public int roundNumber;
-        public int playerWins;
-        public int dealerWins;
-        public int draws;
+        struct GameStatistics
+        {
+            public int roundNumber;
+            public int playerWins;
+            public int dealerWins;
+            public int draws;
+        }
     }
 }
