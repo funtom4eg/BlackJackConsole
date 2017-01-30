@@ -6,14 +6,14 @@ namespace BlackJack.V2
     {
         class Player
         {
-            public List<Card> Hand
-            {
-                get;
-            }
+            public PlayerStats stats;
+
+            public List<Card> Hand { get; }
 
             public Player()
             {
                 Hand = new List<Card>();
+                stats = new PlayerStats();
             }
 
             public int Points
@@ -23,13 +23,13 @@ namespace BlackJack.V2
                     int result = 0;
                     foreach (Card card in Hand)
                     {
-                        if (card.Points > 11)
+                        if ((int)card.Value > 11)
                         {
                             result += 10;
                             continue;
                         }
 
-                        result += card.Points;
+                        result += (int)card.Value;
                     }
 
                     return result;
