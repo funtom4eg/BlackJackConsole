@@ -17,7 +17,7 @@ namespace BlackJack.V2
                 Console.OutputEncoding = Encoding.Unicode;
             }
 
-            static string ShowCard(Card card)
+            static string ShowCard(Card card) //TODO: correct
             {
 
                 if (card.Value <= CardValues.ten)
@@ -113,11 +113,12 @@ namespace BlackJack.V2
 
                 Console.CursorLeft = playerColumnPosition;
 
+                
                 if (column == 0)
                 {
                     Console.WriteLine("Dealer:");
                 }
-                else                                                     //TODO: Question: Another way?
+                else                                                     //TODO: Question: Another way? ()?():()
                 {
                     Console.WriteLine("Player {0}:", column);
                 }
@@ -181,7 +182,7 @@ namespace BlackJack.V2
 
                 overallLastRow++;
 
-                for (int i = 1; i < players.Length; i++)
+                for (int i = 1; i < players.Length; i++) //TODO: winner choose -> startnewround
                 {
                     Console.SetCursorPosition(columnWidth * i, overallLastRow);
                     if (players[i].Points > 21)

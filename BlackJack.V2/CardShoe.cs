@@ -33,7 +33,7 @@ namespace BlackJack.V2
                 minCardsInShoe = blankDeck.Count * numberOfDecks * minVolumeOfShoe / 100;
             }
 
-            void CreateBlankDeck()
+            void CreateBlankDeck() //TODO: redo
             {
                 foreach (CardSuites suite in Enum.GetValues(typeof(CardSuites)))
                 {
@@ -42,9 +42,9 @@ namespace BlackJack.V2
                         blankDeck.Add(new Card(suite, value));
                     }
                 }
-            }
+            } 
 
-            public void FillAndShuffleShoe(int numberOfDecks)
+            public void FillAndShuffleShoe(int numberOfDecks) //TODO: redo
             {
                 if (shuffledCardShoe.Count > 0)
                 {
