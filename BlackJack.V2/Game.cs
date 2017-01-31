@@ -6,7 +6,7 @@ namespace BlackJack.V2
         int roundNumber;
         GameConfig config;
 
-        CardShoe cardShoe;
+        CardDeck cardDeck;
         Player[] players;
 
         bool startNewRound = true;
@@ -14,11 +14,11 @@ namespace BlackJack.V2
         public Game()
         {
 
-            config = new GameConfig() { NumberOfPlayers = 2, NumberOfDecks = 1, MinVolumeOfShoe = 50 };
+            config = new GameConfig() { NumberOfPlayers = 2 };
 
             UI.Welcome(ref config);
 
-            cardShoe = new CardShoe(config.NumberOfDecks, config.MinVolumeOfShoe);
+            cardDeck = new CardDeck();
 
             players = new Player[config.NumberOfPlayers];
             for (int i = 0; i < config.NumberOfPlayers; i++)
@@ -28,22 +28,14 @@ namespace BlackJack.V2
 
             while (startNewRound == true)
             {
-                if (cardShoe.needShoeReset)
-                {
-                    cardShoe.FillAndShuffleShoe(config.NumberOfDecks);
-                }
-                
-                foreach (Player player in players)
-                {
-                    player.Clear();
-                }
-
                 StartNewRound();
             }
         }
 
         void StartNewRound()
         {
+            cardDeck.FillAndShuffleDeck();
+
             UI.ShowHeader(ref roundNumber);
 
             FirstSet();
@@ -52,19 +44,23 @@ namespace BlackJack.V2
 
             DealersTurn();
 
+            SetResults();
+
             UI.ShowResults(players);
 
             startNewRound = UI.PromptNewRound();
+
+            ClearHands();
         }
 
         void FirstSet()
         {
-            players[0].TakeOne(cardShoe.GiveOne());
+            players[0].TakeOne(cardDeck.GiveOne());
 
             for (int i = 1; i < config.NumberOfPlayers; i++)
             {
-                players[i].TakeOne(cardShoe.GiveOne());
-                players[i].TakeOne(cardShoe.GiveOne());
+                players[i].TakeOne(cardDeck.GiveOne());
+                players[i].TakeOne(cardDeck.GiveOne());
             }
 
             UI.ShowHands(players);
@@ -85,7 +81,7 @@ namespace BlackJack.V2
                         break;
                     }
 
-                    players[i].TakeOne(cardShoe.GiveOne());
+                    players[i].TakeOne(cardDeck.GiveOne());
                     UI.ShowNewCard(players[i], i);
                     UI.HighlightCurrentPlayer(i);
                 }
@@ -98,9 +94,44 @@ namespace BlackJack.V2
             {
                 while (players[0].Points < 17)
                 {
-                    players[0].TakeOne(cardShoe.GiveOne());
+                    players[0].TakeOne(cardDeck.GiveOne());
                     UI.ShowNewCard(players[0], 0);
                 }
+            }
+        }
+
+        void SetResults()
+        {
+            for (int i = 1; i < players.Length; i++)
+            {
+                if (players[i].Points > 21)
+                {
+                    players[i].lastRoundResult = -1;
+                    players[i].stats.loses++;
+                    continue;
+                }
+                if (players[0].Points > 21 || players[0].Points < players[i].Points)
+                {
+                    players[i].lastRoundResult = 1;
+                    players[i].stats.wins++;
+                    continue;
+                }
+                if (players[0].Points > players[i].Points)
+                {
+                    players[i].lastRoundResult = -1;
+                    players[i].stats.loses++;
+                    continue;
+                }
+                players[i].lastRoundResult = 0;
+                players[i].stats.draws++;
+            }
+        }
+
+        void ClearHands()
+        {
+            foreach (Player player in players)
+            {
+                player.Clear();
             }
         }
     }

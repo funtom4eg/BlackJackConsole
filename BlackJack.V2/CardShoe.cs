@@ -6,34 +6,21 @@ namespace BlackJack.V2
 {
     partial class Game
     {
-        class CardShoe
+        class CardDeck
         {
             readonly List<Card> blankDeck = new List<Card>();
-            Stack<Card> shuffledCardShoe = new Stack<Card>();
+            Stack<Card> shuffledCardDeck = new Stack<Card>();
 
             static Random rand = new Random();
 
-            int minCardsInShoe;
-            int cardsInShoe
-            {
-                get
-                {
-                    return shuffledCardShoe.Count;
-                }
-            }
-
-            public bool needShoeReset = false;
-
-            public CardShoe(int numberOfDecks, int minVolumeOfShoe)
+            public CardDeck()
             {
                 CreateBlankDeck();
 
-                FillAndShuffleShoe(numberOfDecks);
-
-                minCardsInShoe = blankDeck.Count * numberOfDecks * minVolumeOfShoe / 100;
+                FillAndShuffleDeck();
             }
 
-            void CreateBlankDeck() //TODO: redo
+            void CreateBlankDeck() //TODO: redo? it works good =)
             {
                 foreach (CardSuites suite in Enum.GetValues(typeof(CardSuites)))
                 {
@@ -42,36 +29,24 @@ namespace BlackJack.V2
                         blankDeck.Add(new Card(suite, value));
                     }
                 }
-            } 
+            }
 
-            public void FillAndShuffleShoe(int numberOfDecks) //TODO: redo
+            public void FillAndShuffleDeck()
             {
-                if (shuffledCardShoe.Count > 0)
+                if (shuffledCardDeck.Count > 0)
                 {
-                    shuffledCardShoe.Clear();
+                    shuffledCardDeck.Clear();
                 }
 
-                List<Card> multiDeck = new List<Card>();
-
-                for (int i = 0; i < numberOfDecks; i++)
+                foreach (Card card in blankDeck.OrderBy(x => rand.Next()))
                 {
-                    multiDeck.AddRange(blankDeck);
-                }
-
-                foreach (Card card in multiDeck.OrderBy(x => rand.Next()))
-                {
-                    shuffledCardShoe.Push(card);
+                    shuffledCardDeck.Push(card);
                 }
             }
 
             public Card GiveOne()
             {
-                if (cardsInShoe < minCardsInShoe)
-                {
-                    needShoeReset = true;
-                }
-
-                return shuffledCardShoe.Pop();
+                return shuffledCardDeck.Pop();
             }
         }
     }

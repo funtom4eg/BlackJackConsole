@@ -7,25 +7,27 @@ namespace BlackJack.V2
     {
         static class UI
         {
+            public const int columnWidth = 13;
+            public const int screenWidth = 79;
+
+            public static char[] suites = new char[] { (char)0x2660, (char)0x2663, (char)0x2663, (char)0x2666 };
+
             static int[] playersLastRow;
             static int overallLastRow;
 
-            public const int columnWidth = 15;
-            public const int screenWidth = 90;
             static UI()
             {
                 Console.OutputEncoding = Encoding.Unicode;
             }
 
-            static string ShowCard(Card card) //TODO: correct
+            static string ShowCard(Card card)
             {
-
                 if (card.Value <= CardValues.ten)
                 {
-                    return "[ " + (char)card.Suite + " " + (int)card.Value + " ]";
+                    return "[ " + suites[(int)card.Suite] + " " + (int)card.Value + " ]";
                 }
 
-                return "[ " + (char)card.Suite + " " + card.Value + " ]";
+                return "[ " + suites[(int)card.Suite] + " " + card.Value + " ]";
             }
 
             public static void Welcome(ref GameConfig config)
@@ -51,37 +53,18 @@ namespace BlackJack.V2
                 Console.WriteLine(new string('-', screenWidth));
                 Console.WriteLine("Current config:");
                 Console.WriteLine("Number of players = {0}", config.NumberOfPlayers);
-                Console.WriteLine("Number of decks = {0}", config.NumberOfDecks);
-                Console.WriteLine("Minimum volume of shoe before reset = {0} %", config.MinVolumeOfShoe);
                 Console.WriteLine(new string('-', screenWidth));
             }
 
             static void SetConfig(ref GameConfig config)
             {
                 int newNumOfPlayers = config.NumberOfPlayers;
-                int newNumOfDecks = config.NumberOfDecks;
-                int newMinVolumeOfShoe = config.MinVolumeOfShoe;
 
                 Console.Write("Number of players (2-6 or Enter to skip): ");
-                if (int.TryParse(Console.ReadLine(), out newNumOfPlayers))  //TODO: Question: How can I do it without else?
+
+                if (int.TryParse(Console.ReadLine(), out newNumOfPlayers))
                 {
                     config.NumberOfPlayers = newNumOfPlayers;
-                }
-                else
-                {
-                    Console.WriteLine("Incorrect value, no changes.");
-                }
-
-                Console.Write("Number of decks in shoe (1-8 or Enter to skip): ");
-                if (int.TryParse(Console.ReadLine(), out newNumOfDecks))
-                {
-                    config.NumberOfDecks = newNumOfDecks;
-                }
-
-                Console.Write("Minimum volume of shoe before reset in percent (30-100 or Enter to skip): ");
-                if (int.TryParse(Console.ReadLine(), out newMinVolumeOfShoe))
-                {
-                    config.MinVolumeOfShoe = newMinVolumeOfShoe;
                 }
 
                 ShowConfig(ref config);
@@ -113,15 +96,7 @@ namespace BlackJack.V2
 
                 Console.CursorLeft = playerColumnPosition;
 
-                
-                if (column == 0)
-                {
-                    Console.WriteLine("Dealer:");
-                }
-                else                                                     //TODO: Question: Another way? ()?():()
-                {
-                    Console.WriteLine("Player {0}:", column);
-                }
+                Console.WriteLine(column == 0 ? "Dealer:" : string.Format("Player {0}:", column));
 
                 foreach (Card card in player.Hand)
                 {
@@ -182,29 +157,11 @@ namespace BlackJack.V2
 
                 overallLastRow++;
 
-                for (int i = 1; i < players.Length; i++) //TODO: winner choose -> startnewround
+                for (int i = 1; i < players.Length; i++)
                 {
                     Console.SetCursorPosition(columnWidth * i, overallLastRow);
-                    if (players[i].Points > 21)
-                    {
-                        Console.WriteLine("Lose..");
-                        players[i].stats.loses++;
-                        continue;
-                    }
-                    if (players[0].Points > 21 || players[0].Points < players[i].Points)
-                    {
-                        Console.WriteLine("Win!");
-                        players[i].stats.wins++;
-                        continue;
-                    }
-                    if (players[0].Points > players[i].Points)
-                    {
-                        Console.WriteLine("Lose...");
-                        players[i].stats.loses++;
-                        continue;
-                    }
-                    Console.WriteLine("Draw.");
-                    players[i].stats.draws++;
+                    int result = players[i].lastRoundResult;
+                    Console.WriteLine(result > 0 ? "Win!" : result < 0 ? "Lose.." : "Draw.");
                 }
 
                 overallLastRow++;
@@ -212,9 +169,11 @@ namespace BlackJack.V2
                 for (int i = 1; i < players.Length; i++)
                 {
                     Console.SetCursorPosition(columnWidth * i, overallLastRow);
-                    Console.WriteLine("W-{0}  L-{1}", players[i].stats.wins, players[i].stats.loses);
+                    Console.WriteLine("W - {0}", players[i].stats.wins);
                     Console.CursorLeft = columnWidth * i;
-                    Console.WriteLine("Draws - {0}", players[i].stats.draws);
+                    Console.WriteLine("L - {0}", players[i].stats.loses);
+                    Console.CursorLeft = columnWidth * i;
+                    Console.WriteLine("D - {0}", players[i].stats.draws);
                 }
 
             }

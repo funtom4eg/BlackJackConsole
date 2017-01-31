@@ -12,9 +12,7 @@
         struct GameConfig
         {
             int numberOfPlayers;
-            int numberOfDecks;
-            int minVolumeOfShoe;
-
+           
             public int NumberOfPlayers
             {
                 get
@@ -34,48 +32,6 @@
                         return;
                     }
                     numberOfPlayers = value;
-                }
-            }
-            public int NumberOfDecks
-            {
-                get
-                {
-                    return numberOfDecks;
-                }
-                set
-                {
-                    if (value < 1)
-                    {
-                        numberOfDecks = 1;
-                        return;
-                    }
-                    if (value > 8)
-                    {
-                        numberOfDecks = 8;
-                        return;
-                    }
-                    numberOfDecks = value;
-                }
-            }
-            public int MinVolumeOfShoe
-            {
-                get
-                {
-                    return minVolumeOfShoe;
-                }
-                set
-                {
-                    if (value < 30)
-                    {
-                        minVolumeOfShoe = 30;
-                        return;
-                    }
-                    if (value > 100)
-                    {
-                        minVolumeOfShoe = 100;
-                        return;
-                    }
-                    minVolumeOfShoe = value;
                 }
             }
         }

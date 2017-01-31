@@ -5,22 +5,24 @@ namespace BlackJack.V2
 {
     partial class Game
     {
-        enum CardSuites { spade = 0x2660, club = 0x2663, heart = 0x2665, dimond = 0x2666 } //TODO: codes -> UI
-        enum CardValues //TODO: correct
+        enum CardSuites { spade, club, heart, dimond }
+        enum CardValues :  int
         {
-            two = 2, three, four, five, six = 6, seven = 7, eight = 8,
-            nine = 9, ten = 10, Jack = 10, Queen = 10, King = 10, Ace = 11
+            two = 2, three, four, five, six, seven, eight,
+            nine, ten, Ace, Jack, Queen, King
         }
 
-        class Card //TODO: add points
+        class Card
         {
             public CardSuites Suite { get; }
             public CardValues Value { get; }
+            public int Points { get; }
 
             public Card(CardSuites suite, CardValues value)
             {
                 Suite = suite;
                 Value = value;
+                Points = (int)Value > 11 ? 10 : (int)Value;
             }
         }
     }

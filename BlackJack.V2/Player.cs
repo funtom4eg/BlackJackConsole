@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace BlackJack.V2
 {
@@ -10,6 +11,8 @@ namespace BlackJack.V2
 
             public List<Card> Hand { get; }
 
+            public int lastRoundResult { get; set; }
+
             public Player()
             {
                 Hand = new List<Card>();
@@ -20,19 +23,7 @@ namespace BlackJack.V2
             {
                 get
                 {
-                    int result = 0;
-                    foreach (Card card in Hand)
-                    {
-                        if ((int)card.Value > 11)
-                        {
-                            result += 10;
-                            continue;
-                        }
-
-                        result += (int)card.Value;
-                    }
-
-                    return result;
+                    return Hand.Sum(x => x.Points);
                 }
             }
 
