@@ -1,22 +1,23 @@
 ﻿using System.Linq;
 namespace BlackJack.V2
 {
-    partial class Game
+    class Game
     {
-        int roundNumber;
-        GameConfig config;
+        private int roundNumber;
+        private GameConfig config;
 
-        CardDeck cardDeck;
-        Player[] players;
+        private CardDeck cardDeck;
+        private Player[] players;
 
-        bool startNewRound = true;
+        private bool startNewRound = true;
 
         public Game()
         {
+            config = new GameConfig() { NumberOfPlayers = GameConfig.minPlayers };
 
-            config = new GameConfig() { NumberOfPlayers = 2 };
+            UI.Welcome(config);
 
-            UI.Welcome(ref config);
+            UI.SetConfig(ref config);
 
             cardDeck = new CardDeck();
 
@@ -32,7 +33,7 @@ namespace BlackJack.V2
             }
         }
 
-        void StartNewRound()
+        private void StartNewRound()
         {
             cardDeck.FillAndShuffleDeck();
 
@@ -53,7 +54,7 @@ namespace BlackJack.V2
             ClearHands();
         }
 
-        void FirstSet()
+        private void FirstSet()
         {
             players[0].TakeOne(cardDeck.GiveOne());
 
@@ -66,7 +67,7 @@ namespace BlackJack.V2
             UI.ShowHands(players);
         }
 
-        void PlayersTurn()
+        private void PlayersTurn()
         {
             char playersChoice = default(char);
             for (int i = 1; i < players.Length; i++)
@@ -88,7 +89,7 @@ namespace BlackJack.V2
             }
         }
 
-        void DealersTurn()
+        private void DealersTurn()
         {
             if (players.Where(x => x.Points <= 21).Count() > 1)
             {
@@ -100,34 +101,34 @@ namespace BlackJack.V2
             }
         }
 
-        void SetResults()
+        private void SetResults()
         {
             for (int i = 1; i < players.Length; i++)
             {
                 if (players[i].Points > 21)
                 {
-                    players[i].lastRoundResult = -1;
+                    players[i].LastRoundResult = -1;
                     players[i].stats.loses++;
                     continue;
                 }
                 if (players[0].Points > 21 || players[0].Points < players[i].Points)
                 {
-                    players[i].lastRoundResult = 1;
+                    players[i].LastRoundResult = 1;
                     players[i].stats.wins++;
                     continue;
                 }
                 if (players[0].Points > players[i].Points)
                 {
-                    players[i].lastRoundResult = -1;
+                    players[i].LastRoundResult = -1;
                     players[i].stats.loses++;
                     continue;
                 }
-                players[i].lastRoundResult = 0;
+                players[i].LastRoundResult = 0;
                 players[i].stats.draws++;
             }
         }
 
-        void ClearHands()
+        private void ClearHands()
         {
             foreach (Player player in players)
             {

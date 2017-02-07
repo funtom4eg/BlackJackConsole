@@ -3,39 +3,37 @@ using System.Linq;
 
 namespace BlackJack.V2
 {
-    partial class Game
+    class Player
     {
-        class Player
+        public PlayerStats stats;
+
+        public List<Card> Hand { get; }
+
+        public int LastRoundResult { get; set; }
+
+        public Player()
         {
-            public PlayerStats stats;
+            Hand = new List<Card>();
+            stats = new PlayerStats();
+        }
 
-            public List<Card> Hand { get; }
-
-            public int lastRoundResult { get; set; }
-
-            public Player()
+        public int Points
+        {
+            get
             {
-                Hand = new List<Card>();
-                stats = new PlayerStats();
+                return Hand.Sum(x => x.Points);
             }
+        }
 
-            public int Points
-            {
-                get
-                {
-                    return Hand.Sum(x => x.Points);
-                }
-            }
+        public void TakeOne(Card card)
+        {
+            Hand.Add(card);
+        }
 
-            public void TakeOne(Card card)
-            {
-                Hand.Add(card);
-            }
-
-            public void Clear()
-            {
-                Hand.Clear();
-            }
+        public void Clear()
+        {
+            Hand.Clear();
         }
     }
 }
+
