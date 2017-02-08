@@ -1,36 +1,36 @@
 ﻿namespace BlackJack.V2
 {
-    struct PlayerStats
+    public struct PlayerStats
     {
         public int wins;
         public int loses;
         public int draws;
     }
 
-    struct GameConfig
+    public struct GameConfig
     {
-        private int numberOfPlayers;
         public const int minPlayers = 2, maxPlayers = 6;
+        private int _numberOfPlayers;
 
         public int NumberOfPlayers
         {
             get
             {
-                return numberOfPlayers;
+                return _numberOfPlayers;
             }
             set
             {
                 if (value < minPlayers)
                 {
-                    numberOfPlayers = minPlayers;
+                    _numberOfPlayers = minPlayers;
                     return;
                 }
                 if (value > maxPlayers)
                 {
-                    numberOfPlayers = maxPlayers;
+                    _numberOfPlayers = maxPlayers;
                     return;
                 }
-                numberOfPlayers = value;
+                _numberOfPlayers = value;
             }
         }
     }

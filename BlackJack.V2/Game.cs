@@ -1,33 +1,37 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 namespace BlackJack.V2
 {
-    class Game
+    public class Game
     {
-        private int roundNumber;
-        private GameConfig config;
+        private int _roundNumber;
+        private GameConfig _config;
 
-        private CardDeck cardDeck;
-        private Player[] players;
+        private CardDeck _cardDeck;
+        private List<Player> _players;
 
-        private bool startNewRound = true;
+        private int _blackJack = 21;
+        private int _minDealerPoints = 17;
+
+        private bool _startNewRound = true;
 
         public Game()
         {
-            config = new GameConfig() { NumberOfPlayers = GameConfig.minPlayers };
+            _config = new GameConfig() { NumberOfPlayers = GameConfig.minPlayers };
 
-            UI.Welcome(config);
+            UI.Welcome(_config);
 
-            UI.SetConfig(ref config);
+            UI.SetConfig(ref _config);
 
-            cardDeck = new CardDeck();
+            _cardDeck = new CardDeck();
 
-            players = new Player[config.NumberOfPlayers];
-            for (int i = 0; i < config.NumberOfPlayers; i++)
+            _players = new List<Player>(_config.NumberOfPlayers);
+            for (int i = 0; i < _config.NumberOfPlayers; i++)
             {
-                players[i] = new Player();
+                _players.Add(new Player());
             }
 
-            while (startNewRound == true)
+            while (_startNewRound == true)
             {
                 StartNewRound();
             }
@@ -35,9 +39,9 @@ namespace BlackJack.V2
 
         private void StartNewRound()
         {
-            cardDeck.FillAndShuffleDeck();
+            _cardDeck.FillAndShuffleDeck();
 
-            UI.ShowHeader(ref roundNumber);
+            UI.ShowHeader(ref _roundNumber);
 
             FirstSet();
 
@@ -47,33 +51,33 @@ namespace BlackJack.V2
 
             SetResults();
 
-            UI.ShowResults(players);
+            UI.ShowResults(_players);
 
-            startNewRound = UI.PromptNewRound();
+            _startNewRound = UI.PromptNewRound();
 
             ClearHands();
         }
 
         private void FirstSet()
         {
-            players[0].TakeOne(cardDeck.GiveOne());
+            _players[0].TakeOne(_cardDeck.GiveOne());
 
-            for (int i = 1; i < config.NumberOfPlayers; i++)
+            for (int i = 1; i < _config.NumberOfPlayers; i++)
             {
-                players[i].TakeOne(cardDeck.GiveOne());
-                players[i].TakeOne(cardDeck.GiveOne());
+                _players[i].TakeOne(_cardDeck.GiveOne());
+                _players[i].TakeOne(_cardDeck.GiveOne());
             }
 
-            UI.ShowHands(players);
+            UI.ShowHands(_players);
         }
 
         private void PlayersTurn()
         {
             char playersChoice = default(char);
-            for (int i = 1; i < players.Length; i++)
+            for (int i = 1; i < _players.Count; i++)
             {
                 UI.HighlightCurrentPlayer(i);
-                while (players[i].Points < 21)
+                while (_players[i].Points < _blackJack)
                 {
                     playersChoice = UI.GetPlayerChoice();
 
@@ -82,8 +86,8 @@ namespace BlackJack.V2
                         break;
                     }
 
-                    players[i].TakeOne(cardDeck.GiveOne());
-                    UI.ShowNewCard(players[i], i);
+                    _players[i].TakeOne(_cardDeck.GiveOne());
+                    UI.ShowNewCard(_players[i], i);
                     UI.HighlightCurrentPlayer(i);
                 }
             }
@@ -91,46 +95,46 @@ namespace BlackJack.V2
 
         private void DealersTurn()
         {
-            if (players.Where(x => x.Points <= 21).Count() > 1)
+            if (_players.Where(x => x.Points <= _blackJack).Count() > 1)
             {
-                while (players[0].Points < 17)
+                while (_players[0].Points < _minDealerPoints)
                 {
-                    players[0].TakeOne(cardDeck.GiveOne());
-                    UI.ShowNewCard(players[0], 0);
+                    _players[0].TakeOne(_cardDeck.GiveOne());
+                    UI.ShowNewCard(_players[0], 0);
                 }
             }
         }
 
         private void SetResults()
         {
-            for (int i = 1; i < players.Length; i++)
+            for (int i = 1; i < _players.Count; i++)
             {
-                if (players[i].Points > 21)
+                if (_players[i].Points > _blackJack)
                 {
-                    players[i].LastRoundResult = -1;
-                    players[i].stats.loses++;
+                    _players[i].LastRoundResult = -1;
+                    _players[i].stats.loses++;
                     continue;
                 }
-                if (players[0].Points > 21 || players[0].Points < players[i].Points)
+                if (_players[0].Points > _blackJack || _players[0].Points < _players[i].Points)
                 {
-                    players[i].LastRoundResult = 1;
-                    players[i].stats.wins++;
+                    _players[i].LastRoundResult = 1;
+                    _players[i].stats.wins++;
                     continue;
                 }
-                if (players[0].Points > players[i].Points)
+                if (_players[0].Points > _players[i].Points)
                 {
-                    players[i].LastRoundResult = -1;
-                    players[i].stats.loses++;
+                    _players[i].LastRoundResult = -1;
+                    _players[i].stats.loses++;
                     continue;
                 }
-                players[i].LastRoundResult = 0;
-                players[i].stats.draws++;
+                _players[i].LastRoundResult = 0;
+                _players[i].stats.draws++;
             }
         }
 
         private void ClearHands()
         {
-            foreach (Player player in players)
+            foreach (Player player in _players)
             {
                 player.Clear();
             }

@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace BlackJack.V2
 {
-    class CardDeck
+    public class CardDeck
     {
-        private readonly List<Card> newCardDeck = new List<Card>();
-        private Stack<Card> shuffledCardDeck = new Stack<Card>();
+        private readonly List<Card> _newCardDeck = new List<Card>();
+        private Stack<Card> _shuffledCardDeck = new Stack<Card>();
 
-        private static Random rand = new Random();
+        private static Random _rand = new Random();
 
         public CardDeck()
         {
@@ -22,34 +22,44 @@ namespace BlackJack.V2
         {
             foreach (CardSuites suite in Enum.GetValues(typeof(CardSuites)))
             {
-                for (int i = (int)CardValues.two; i <= (int)CardValues.Ace; i++)
+                int points = 2;
+                for (var value = CardValues.two; value <= CardValues.Ace; value++)
                 {
-                    newCardDeck.Add(new Card(suite, (CardValues)i, i));
+                    Card card = new Card();
+                    card.Suite = suite;
+                    card.Value = value;
+                    card.Points = points++;
+                    _newCardDeck.Add(card);
                 }
 
-                for (int i = (int)CardValues.Jack; i <= (int)CardValues.King; i++)
+                points = 10;
+                for (var value = CardValues.Jack; value <= CardValues.King; value++)
                 {
-                    newCardDeck.Add(new Card(suite, (CardValues)i, (int)CardValues.ten));
+                    Card card = new Card();
+                    card.Suite = suite;
+                    card.Value = value;
+                    card.Points = points;
+                    _newCardDeck.Add(card);
                 }
             }
         }
 
         public void FillAndShuffleDeck()
         {
-            if (shuffledCardDeck.Count > 0)
+            if (_shuffledCardDeck.Count > 0)
             {
-                shuffledCardDeck.Clear();
+                _shuffledCardDeck.Clear();
             }
 
-            foreach (Card card in newCardDeck.OrderBy(x => rand.Next()))
+            foreach (Card card in _newCardDeck.OrderBy(x => Guid.NewGuid()))    //_rand.Next())) ?
             {
-                shuffledCardDeck.Push(card);
+                _shuffledCardDeck.Push(card);
             }
         }
 
         public Card GiveOne()
         {
-            return shuffledCardDeck.Pop();
+            return _shuffledCardDeck.Pop();
         }
     }
 }

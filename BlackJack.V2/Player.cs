@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace BlackJack.V2
 {
-    class Player
+    public class Player
     {
         public PlayerStats stats;
 

@@ -1,17 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace BlackJack.V2
 {
-    static class UI
+    public static class UI
     {
-        public const int columnWidth = 13;
-        public const int screenWidth = 79;
+        private const int _columnWidth = 13;
+        private const int _screenWidth = 79;
 
         public static char[] suites = new char[] { (char)0x2660, (char)0x2663, (char)0x2663, (char)0x2666 };
 
-        private static int[] playersLastRow;
-        private static int overallLastRow;
+        private static int[] _playersLastRow;
+        private static int _overallLastRow;
 
         static UI()
         {
@@ -22,7 +23,7 @@ namespace BlackJack.V2
         {
             if (card.Value <= CardValues.ten)
             {
-                return "[ " + suites[(int)card.Suite] + " " + (int)card.Value + " ]";
+                return "[ " + suites[(int)card.Suite] + " " + card.Points + " ]";
             }
 
             return "[ " + suites[(int)card.Suite] + " " + card.Value + " ]";
@@ -37,10 +38,10 @@ namespace BlackJack.V2
 
         private static void ShowConfig(GameConfig config)
         {
-            Console.WriteLine(new string('-', screenWidth));
+            Console.WriteLine(new string('-', _screenWidth));
             Console.WriteLine("Current config:");
             Console.WriteLine("Number of players = {0}. First player is Dealer.", config.NumberOfPlayers);
-            Console.WriteLine(new string('-', screenWidth));
+            Console.WriteLine(new string('-', _screenWidth));
         }
 
         public static void SetConfig(ref GameConfig config)
@@ -64,20 +65,20 @@ namespace BlackJack.V2
                 Console.ReadKey(true);
             }
 
-            playersLastRow = new int[config.NumberOfPlayers];
+            _playersLastRow = new int[config.NumberOfPlayers];
         }
 
         public static void ShowHeader(ref int roundNumber)
         {
             Console.Clear();
             Console.WriteLine("Round {0}. Enter Your choice (h: Hit, WhiteSpace: Stand):", ++roundNumber);
-            Console.WriteLine(new string('=', screenWidth));
+            Console.WriteLine(new string('=', _screenWidth));
         }
 
-        public static void ShowHands(Player[] players)
+        public static void ShowHands(List<Player> players)
         {
             int cursorRow = Console.CursorTop;
-            for (int i = 0; i < players.Length; i++)
+            for (int i = 0; i < players.Count; i++)
             {
                 ShowPlayerHand(players[i], i);
                 Console.CursorTop = cursorRow;
@@ -86,7 +87,7 @@ namespace BlackJack.V2
 
         private static void ShowPlayerHand(Player player, int column)
         {
-            int playerColumnPosition = columnWidth * column;
+            int playerColumnPosition = _columnWidth * column;
 
             Console.CursorLeft = playerColumnPosition;
 
@@ -98,30 +99,30 @@ namespace BlackJack.V2
                 Console.WriteLine(ShowCard(card));
             }
 
-            playersLastRow[column] = Console.CursorTop;
+            _playersLastRow[column] = Console.CursorTop;
 
-            if (playersLastRow[column] > overallLastRow)
+            if (_playersLastRow[column] > _overallLastRow)
             {
-                overallLastRow = playersLastRow[column];
+                _overallLastRow = _playersLastRow[column];
             }
         }
 
         public static void HighlightCurrentPlayer(int index)
         {
-            Console.SetCursorPosition(columnWidth * index, playersLastRow[index]);
+            Console.SetCursorPosition(_columnWidth * index, _playersLastRow[index]);
         }
 
         public static void ShowNewCard(Player player, int column)
         {
-            Console.SetCursorPosition(columnWidth * column, playersLastRow[column]);
+            Console.SetCursorPosition(_columnWidth * column, _playersLastRow[column]);
 
             Console.WriteLine(ShowCard(player.Hand[player.Hand.Count - 1]));
 
-            playersLastRow[column] = Console.CursorTop;
+            _playersLastRow[column] = Console.CursorTop;
 
-            if (playersLastRow[column] > overallLastRow)
+            if (_playersLastRow[column] > _overallLastRow)
             {
-                overallLastRow = playersLastRow[column];
+                _overallLastRow = _playersLastRow[column];
             }
         }
 
@@ -137,36 +138,36 @@ namespace BlackJack.V2
             return choice;
         }
 
-        public static void ShowResults(Player[] players)
+        public static void ShowResults(List<Player> players)
         {
-            Console.SetCursorPosition(0, overallLastRow);
-            Console.WriteLine(new string('=', screenWidth));
-            overallLastRow++;
+            Console.SetCursorPosition(0, _overallLastRow);
+            Console.WriteLine(new string('=', _screenWidth));
+            _overallLastRow++;
 
-            for (int i = 0; i < players.Length; i++)
+            for (int i = 0; i < players.Count; i++)
             {
-                Console.SetCursorPosition(columnWidth * i, overallLastRow);
+                Console.SetCursorPosition(_columnWidth * i, _overallLastRow);
                 Console.WriteLine(players[i].Points);
             }
 
-            overallLastRow++;
+            _overallLastRow++;
 
-            for (int i = 1; i < players.Length; i++)
+            for (int i = 1; i < players.Count; i++)
             {
-                Console.SetCursorPosition(columnWidth * i, overallLastRow);
+                Console.SetCursorPosition(_columnWidth * i, _overallLastRow);
                 int result = players[i].LastRoundResult;
                 Console.WriteLine(result > 0 ? "Win!" : result < 0 ? "Lose.." : "Draw.");
             }
 
-            overallLastRow++;
+            _overallLastRow++;
 
-            for (int i = 1; i < players.Length; i++)
+            for (int i = 1; i < players.Count; i++)
             {
-                Console.SetCursorPosition(columnWidth * i, overallLastRow);
+                Console.SetCursorPosition(_columnWidth * i, _overallLastRow);
                 Console.WriteLine("W - {0}", players[i].stats.wins);
-                Console.CursorLeft = columnWidth * i;
+                Console.CursorLeft = _columnWidth * i;
                 Console.WriteLine("L - {0}", players[i].stats.loses);
-                Console.CursorLeft = columnWidth * i;
+                Console.CursorLeft = _columnWidth * i;
                 Console.WriteLine("D - {0}", players[i].stats.draws);
             }
 
@@ -174,13 +175,13 @@ namespace BlackJack.V2
 
         public static bool PromptNewRound()
         {
-            Console.WriteLine(new string('=', screenWidth));
+            Console.WriteLine(new string('=', _screenWidth));
             Console.WriteLine("Press any key to start new game, or \"x\" to exit game...");
             if (Console.ReadKey(true).KeyChar == 'x')
             {
                 return false;
             }
-            overallLastRow = default(int);
+            _overallLastRow = default(int);
             return true;
         }
     }

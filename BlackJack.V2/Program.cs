@@ -3,7 +3,7 @@ using System.Text;
 
 namespace BlackJack.V2
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
