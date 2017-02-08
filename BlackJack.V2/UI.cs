@@ -9,7 +9,7 @@ namespace BlackJack.V2
         private const int _columnWidth = 13;
         private const int _screenWidth = 79;
 
-        public static char[] suites = new char[] { (char)0x2660, (char)0x2663, (char)0x2663, (char)0x2666 };
+        private static char[] _suites = new char[] { (char)0x2660, (char)0x2663, (char)0x2663, (char)0x2666 };
 
         private static int[] _playersLastRow;
         private static int _overallLastRow;
@@ -23,10 +23,10 @@ namespace BlackJack.V2
         {
             if (card.Value <= CardValues.ten)
             {
-                return "[ " + suites[(int)card.Suite] + " " + card.Points + " ]";
+                return "[ " + _suites[(int)card.Suite] + " " + card.Points + " ]";
             }
 
-            return "[ " + suites[(int)card.Suite] + " " + card.Value + " ]";
+            return "[ " + _suites[(int)card.Suite] + " " + card.Value + " ]";
         }
 
         public static void Welcome(GameConfig config)
